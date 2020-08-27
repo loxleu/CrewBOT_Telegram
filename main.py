@@ -1,6 +1,7 @@
 import telebot
+import random
+import re
 from telebot import types
-
 # Importing libraries
 
 bot = telebot.TeleBot('1150447891:AAEzlvpteXr3AZWTjsU5I6C--epzvgJgrNs', parse_mode='MarkdownV2')
@@ -12,6 +13,10 @@ keyboard = types.InlineKeyboardMarkup()
 keyboard.add(types.InlineKeyboardButton(text='Кнопка 1', callback_data='button1'))
 keyboard.add(types.InlineKeyboardButton(text='Кнопка 2', callback_data='button2'))
 keyboard.add(types.InlineKeyboardButton(text='Открыть сайт', url='https://birdsvoices.github.io/'))
+
+
+phrases_hello = ["Привет\\!", "Приветик\\!", "Здравствуй, человек\\!", "Приветствую\\!", "О, привет\\!"]
+phrases_status = ["Всё нормально\\.", "Всё хорошо\\.", "Всё замечательно\\!"]
 
 
 @bot.message_handler(commands=['start'])
@@ -31,11 +36,13 @@ def help_(message):
 
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
-    if message.text == 'Привет':
-        bot.send_message(message.from_user.id, "О, привет\\!")
+    if re.fullmatch('Привет+', message.text.lower()):
+        bot.send_message(message.from_user.id, random.choice(phrases_hello))
+    elif re.fullmatch('Как дел(?:а|ишки)\\??+', message.text.lower()):
+        bot.send_message(message.from_user.id, random.choice(phrases_status))
     else:
-        bot.send_message(message.from_user.id, "Ты говоришь что-то непонятное. Введи /help, чтобы получить справку по \
-                                               командам.")
+        bot.send_message(message.from_user.id, "Ты говоришь что\\-то непонятное\\. Введи /help, чтобы получить справку по \
+                                               командам\\.")
 
 
 @bot.callback_query_handler(func=lambda call: True)
