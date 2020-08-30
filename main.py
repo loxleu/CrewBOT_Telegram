@@ -1,6 +1,5 @@
 import telebot
 import random
-import re
 from telebot import types
 # Importing libraries
 
@@ -12,11 +11,20 @@ print('I am ready!')
 keyboard = types.InlineKeyboardMarkup()
 keyboard.add(types.InlineKeyboardButton(text='Кнопка 1', callback_data='button1'))
 keyboard.add(types.InlineKeyboardButton(text='Кнопка 2', callback_data='button2'))
-keyboard.add(types.InlineKeyboardButton(text='Открыть сайт', url='https://birdsvoices.github.io/'))
+keyboard.add(types.InlineKeyboardButton(text='Открыть сайт', url='https://birdsvoices.github.io/?from=tg'))
 
 
+keyboard_link = types.InlineKeyboardMarkup()
+keyboard.add(types.InlineKeyboardButton(text='Открыть сайт', url='https://birdsvoices.guthub.io/&from=tg'))
+keyboard.add(types.InlineKeyboardButton(text='Открыть репозиторий', url='https://github.com/birdsvoices/birdsvoices.\
+                                                                        github.io/'))
+
+
+phrases_alphabet = 'абвгдеёжзиЙклмнопрстуфхцчшщъыьэюя'
 phrases_hello = ["Привет\\!", "Приветик\\!", "Здравствуй, человек\\!", "Приветствую\\!", "О, привет\\!"]
-phrases_status = ["Всё нормально\\.", "Всё хорошо\\.", "Всё замечательно\\!"]
+phrases_status = ["Всё нормально\\.", "Всё хорошо\\.", "Всё замечательно\\!", "Всё классно"]
+phrases_actions = ["Я выполняю поставленную задачу, как и подобает роботу\\!", "Отвечаю на команды пользователей",
+                   "Работаю", "Я читаю комментарии к своему коду", "Думаю, его бы ещё такогго интересного ответить"]
 
 
 @bot.message_handler(commands=['start'])
@@ -34,15 +42,28 @@ def help_(message):
     bot.send_message(message.from_user.id, "Тут должен был быть список команд")
 
 
+@bot.message_handler(commands=['link'])
+def link(message):
+    bot.send_message(message.from_user.id, "Выбери нужную кнопку из представленных ниже")
+
+
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
-    if re.fullmatch('Привет+', message.text.lower()):
+    if 'привет' in str(message.text).lower().strip():
         bot.send_message(message.from_user.id, random.choice(phrases_hello))
-    elif re.fullmatch('Как дел(?:а|ишки)\\??+', message.text.lower()):
+    elif 'как дела' in str(message.text).lower().strip():
         bot.send_message(message.from_user.id, random.choice(phrases_status))
+    elif 'жулик' in str(message.text).lower().strip():
+        bot.send_message(message.from_user.id, 'Я не жулик\\!')
+    elif 'мощно' in str(message.text).lower().strip():
+        bot.send_message(message.from_user.id, 'А то\\!')
+    elif ('на чем' and 'написан') in str(message.text).lower().strip():
+        bot.send_message(message.from_user.id, 'Я написан на языке программирования Python\\.')
+    elif ('сколько строк' and 'код') in str(message.text).lower().strip():
+        bot.send_message(message.from_user.id, 'В моём коде 70 строк или около того\\.')
     else:
-        bot.send_message(message.from_user.id, "Ты говоришь что\\-то непонятное\\. Введи /help, чтобы получить справку по \
-                                               командам\\.")
+        bot.send_message(message.from_user.id, "Ты говоришь что\\-то непонятное\\. Введи /help, чтобы получить \
+                                               справку по командам\\.")
 
 
 @bot.callback_query_handler(func=lambda call: True)
